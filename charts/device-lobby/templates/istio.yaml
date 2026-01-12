@@ -54,36 +54,6 @@ spec:
             # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
             X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/mps/ws/relay/
 
-    # Root web UI
-    - match:
-        - uri:
-            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/
-      route:
-        - destination:
-            host: webui.{{ .Release.Namespace }}.svc.cluster.local
-            port:
-              number: 80
-      corsPolicy:
-        allowOrigins:
-          - exact: "*"
-        allowMethods:
-          - GET
-          - POST
-          - PUT
-          - DELETE
-          - OPTIONS
-        allowHeaders:
-          - "*"
-        exposeHeaders:
-          - "*"
-        maxAge: 24h
-      headers:
-        request:
-          add:
-            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
-            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
-            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/
-
     # /activate -> rps:8080
     - match:
         - uri:
@@ -234,6 +204,36 @@ spec:
             # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
             X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/mps
 
+    # Root web UI (must be last to avoid shadowing more specific routes)
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/
+      route:
+        - destination:
+            host: webui.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 80
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/
+
 ---
 # TCP/TLS passthrough for CIRA equivalent (port 4433)
 apiVersion: networking.istio.io/v1beta1
@@ -269,7 +269,7 @@ spec:
     - match:
         - port: 4433
           sniHosts:
-            - "*"
+            - '{{ include "host" . }}'
       route:
         - destination:
             host: mps.{{ .Release.Namespace }}.svc.cluster.local
@@ -278,19 +278,6 @@ spec:
 
 ---
 # JWT validation placeholder (replace issuer and jwksUri)
-{{/*apiVersion: security.istio.io/v1beta1*/}}
-{{/*kind: RequestAuthentication*/}}
-{{/*metadata:*/}}
-{{/*  name: device-mgmt-jwt*/}}
-{{/*  namespace: {{ .Release.Namespace }}*/}}
-{{/*spec:*/}}
-{{/*  selector:*/}}
-{{/*    matchLabels:*/}}
-{{/*      app: mpsrouter*/}}
-{{/*  jwtRules:*/}}
-{{/*    - issuer: https://your-issuer/*/}}
-{{/*      jwksUri: https://your-issuer/.well-known/jwks.json*/}}
-{{/*      forwardOriginalToken: true*/}}
 apiVersion: security.istio.io/v1
 kind: RequestAuthentication
 metadata:
@@ -304,7 +291,7 @@ spec:
     - issuer: "https://{{ include "host" . }}"
       audiences:
         - "device-lobby-demonstrations"
-      jwksUri: "https://{{ include "host" . }}/.well-known/jwks.json"
+      jwksUri: "https://{{- printf "jwks-%s-%s.%s" .Chart.Name .Release.Namespace .Values.domain -}}/api/v1/keys"
 
 ---
 # Authorization policy approximating "admin-acl" using a JWT claim

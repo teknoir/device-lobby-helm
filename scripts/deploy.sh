@@ -34,24 +34,19 @@ else
   DOMAIN="teknoir.cloud"
 fi
 
-#cat <<EOF | kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f -
-#---
-#apiVersion: helm.cattle.io/v1
-#kind: HelmChart
-#metadata:
-#  name: device-lobby
-#  namespace: ${NAMESPACE}
-#spec:
-#  repo: https://teknoir.github.io/device-lobby-helm
-#  chart: device-lobby
-#  targetNamespace: ${NAMESPACE}
-#  valuesContent: |-
-#    domain: ${DOMAIN}
-#
-#EOF
+cat <<EOF | kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f -
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: device-lobby
+  namespace: ${NAMESPACE}
+spec:
+  repo: https://teknoir.github.io/device-lobby-helm
+  chart: device-lobby
+  version: 0.0.1-beta.1
+  targetNamespace: ${NAMESPACE}
+  valuesContent: |-
+    domain: ${DOMAIN}
 
-#helm --kube-context "${CONTEXT}" -n "${NAMESPACE}" template device-lobby ./charts/device-lobby --values scripts/values.yaml
-
-helm --kube-context "${CONTEXT}" -n "${NAMESPACE}" upgrade --install device-lobby ./charts/device-lobby \
-  --values scripts/values.yaml \
-  --set domain="${DOMAIN}"
+EOF
