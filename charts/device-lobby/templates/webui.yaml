@@ -61,8 +61,8 @@ spec:
       labels:
         app: {{ .Chart.Name }}-webui
     spec:
-      imagePullSecrets:
-        - name: registrycredentials
+{{/*      imagePullSecrets:*/}}
+{{/*        - name: registrycredentials*/}}
       volumes:
       - name: nginx-conf
         configMap:

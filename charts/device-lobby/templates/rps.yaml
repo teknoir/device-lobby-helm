@@ -35,8 +35,8 @@ spec:
       labels:
         app: {{ .Chart.Name }}-rps
     spec:
-      imagePullSecrets:
-        - name: registrycredentials
+{{/*      imagePullSecrets:*/}}
+{{/*        - name: registrycredentials*/}}
       containers:
         - name: {{ .Chart.Name }}-rps
           securityContext:

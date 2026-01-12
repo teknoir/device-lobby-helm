@@ -35,8 +35,8 @@ spec:
       labels:
         app: {{ .Chart.Name }}-mps
     spec:
-      imagePullSecrets:
-        - name: registrycredentials
+{{/*      imagePullSecrets:*/}}
+{{/*        - name: registrycredentials*/}}
       containers:
         - name: {{ .Chart.Name }}-mps
           image: {{ .Values.images.mps }}
