@@ -33,10 +33,6 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}-postgres
-          securityContext:
-            runAsUser: 999
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
           image:  {{ .Values.images.postgres }}
           readinessProbe:
             exec:
