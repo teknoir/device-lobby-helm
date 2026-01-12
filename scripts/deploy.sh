@@ -44,9 +44,45 @@ metadata:
 spec:
   repo: https://teknoir.github.io/device-lobby-helm
   chart: device-lobby
-  version: 0.0.1-beta.4
+  version: 0.0.1-beta.5
   targetNamespace: ${NAMESPACE}
   valuesContent: |-
     domain: ${DOMAIN}
 
+EOF
+
+cat <<EOF | kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f -
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: device-lobby-mpsweb
+type: Opaque
+stringData:
+  user: teknoir
+  password: teknoir123456!#
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: device-lobby-rps
+type: Opaque
+stringData:
+  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/rpsdb?sslmode=<SSL-MODE>
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: device-lobby-mps
+type: Opaque
+stringData:
+  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb?sslmode=<SSL-MODE>
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: device-lobby-mpsrouter
+type: Opaque
+stringData:
+  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb?sslmode=<SSL-MODE>
 EOF

@@ -322,7 +322,7 @@ spec:
       tls:
         mode: PASSTHROUGH
       hosts:
-        - '{{ include "host" . }}'
+        - 'cira-{{ include "host" . }}'
 
 ---
 apiVersion: networking.istio.io/v1beta1
