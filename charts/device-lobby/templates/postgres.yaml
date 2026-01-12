@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Chart.Name }}-postgres
+  name: {{ .Chart.Name }}-postgres
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - port: 5432
+    name: tcp-postgres
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: {{ .Chart.Name }}-postgres
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-postgres
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.postgres.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-postgres
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-postgres
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-postgres
+          securityContext:
+            runAsUser: 999
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          image:  {{ .Values.images.postgres }}
+          readinessProbe:
+            exec:
+              command: ["/app","--health"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          env:
+            - name: POSTGRES_DB
+              value: rpsdb
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-postgres
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-postgres
+                  key: password
+          ports:
+            - containerPort: 5432
+              name: tcp-postgres
+         

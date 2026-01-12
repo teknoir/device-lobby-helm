@@ -62,8 +62,8 @@ spec:
             - name: "RPS_CONNECTION_STRING"
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Chart.Name }}-rps
-                  key: connectionString
+                  name: {{ .Chart.Name }}-postgres
+                  key: connectionStringRPS
 {{/*            - name: RPS_VAULT_TOKEN*/}}
 {{/*              valueFrom:*/}}
 {{/*                secretKeyRef:*/}}

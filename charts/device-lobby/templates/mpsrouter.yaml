@@ -33,8 +33,6 @@ spec:
       labels:
         app: {{ .Chart.Name }}-mpsrouter
     spec:
-{{/*      imagePullSecrets:*/}}
-{{/*        - name: registrycredentials*/}}
       containers:
         - name: {{ .Chart.Name }}-mpsrouter
           securityContext:
@@ -51,8 +49,8 @@ spec:
             - name: "MPS_CONNECTION_STRING"
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Chart.Name }}-mpsrouter
-                  key: connectionString
+                  name: {{ .Chart.Name }}-postgres
+                  key: connectionStringMPS
             - name: "PORT"
               value: "8003"
             - name: "MPS_HOST"

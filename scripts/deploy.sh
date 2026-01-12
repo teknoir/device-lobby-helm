@@ -59,7 +59,7 @@ metadata:
 spec:
   repo: https://teknoir.github.io/device-lobby-helm
   chart: device-lobby
-  version: 0.0.1-beta.11
+  version: 0.0.1-beta.12
   targetNamespace: ${NAMESPACE}
   valuesContent: |-
     domain: ${DOMAIN}
@@ -81,29 +81,14 @@ stringData:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: device-lobby-rps
+  name: device-lobby-postgres
   namespace: ${NAMESPACE}
 type: Opaque
 stringData:
-  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/rpsdb
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: device-lobby-mps
-  namespace: ${NAMESPACE}
-type: Opaque
-stringData:
-  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: device-lobby-mpsrouter
-  namespace: ${NAMESPACE}
-type: Opaque
-stringData:
-  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb
+  user: teknoir
+  password: teknoir123456!#
+  connectionStringRPS: postgresql://teknoir:teknoir123456!#@device-lobby-postgres:5432/rpsdb
+  connectionStringMPS: postgresql://teknoir:teknoir123456!#@device-lobby-postgres:5432/mpsdb
 ---
 apiVersion: v1
 kind: Secret

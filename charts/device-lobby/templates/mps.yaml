@@ -55,10 +55,8 @@ spec:
             - name: "MPS_CONNECTION_STRING"
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Chart.Name }}-mps
-                  key: connectionString
-{{/*            - name: "MPS_VAULT_ADDRESS"*/}}
-{{/*              value: "http://{{ .Release.Name }}-vault:8200"*/}}
+                  name: {{ .Chart.Name }}-postgres
+                  key: connectionStringMPS
             - name: "MPS_SECRETS_PATH"
               value: 'kv/data/'
             - name: "MPS_PORT"
@@ -89,11 +87,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-mpsweb
                   key: password
-{{/*            - name: MPS_VAULT_TOKEN*/}}
-{{/*              valueFrom:*/}}
-{{/*                secretKeyRef:*/}}
-{{/*                  name: {{ .Chart.Name }}-vault*/}}
-{{/*                  key: vaultKey*/}}
           ports:
             - containerPort: 3000
               name: http-webapi
