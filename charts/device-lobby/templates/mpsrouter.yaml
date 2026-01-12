@@ -55,7 +55,7 @@ spec:
                   key: connectionString
             - name: "PORT"
               value: "8003"
-            - name: "MPS_CONNECTION_STRING"
+            - name: "MPS_HOST"
               value: {{ .Chart.Name }}-mps
             - name: "MPS_PORT"
               value: "3000"
