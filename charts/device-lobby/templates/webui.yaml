@@ -1,7 +1,8 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-config-file
+  name: {{ .Chart.Name }}-nginx-config-file
   namespace: {{ .Release.Namespace }}
   labels:
     app: nginx-conf 
@@ -26,49 +27,51 @@ data:
           root   /usr/share/nginx/html;
       }
     }
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: webui
-  name: webui
+    app: {{ .Chart.Name }}-webui
+  name: {{ .Chart.Name }}-webui
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
   - port: 80
-    name: webui
+    name: http-webui
     protocol: TCP
     targetPort: 80
   selector:
-    app: webui
+    app: {{ .Chart.Name }}-webui
+
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webui
+  name: {{ .Chart.Name }}-webui
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.ui.replicaCount }}
   selector:
     matchLabels:
-      app: webui
+      app: {{ .Chart.Name }}-webui
   template:
     metadata:
       labels:
-        app: webui
+        app: {{ .Chart.Name }}-webui
     spec:
       imagePullSecrets:
         - name: registrycredentials
       volumes:
       - name: nginx-conf
         configMap:
-          name: nginx-config-file
+          name: {{ .Chart.Name }}-nginx-config-file
           items:
           - key: nginx.conf
             path: nginx.conf
       containers:
-      - name: webui
+      - name: {{ .Chart.Name }}-webui
         image: {{.Values.images.webui}}
         volumeMounts:
           - name: nginx-conf
@@ -81,4 +84,4 @@ spec:
             value: "https://{{ include "host" . }}/rps"
         ports:
         - containerPort: 80
-          name: ui
+          name: http-ui

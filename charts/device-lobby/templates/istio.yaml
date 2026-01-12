@@ -329,7 +329,7 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: cira-vs
+  name: {{ .Chart.Name }}-cira-vs
   namespace: {{ .Release.Namespace }}
 spec:
   hosts:
@@ -352,12 +352,12 @@ spec:
 apiVersion: security.istio.io/v1
 kind: RequestAuthentication
 metadata:
-  name: device-lobby-jwt-remote
+  name: {{ .Chart.Name }}-jwt-remote
   namespace: demonstrations
 spec:
   selector:
     matchLabels:
-      app: mpsrouter
+      app: {{ .Chart.Name }}-mpsrouter
   jwtRules:
     - issuer: "https://{{ include "host" . }}"
       audiences:
@@ -370,12 +370,12 @@ spec:
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: admin-acl
+  name: {{ .Chart.Name }}-admin-acl
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: mpsrouter
+      app: {{ .Chart.Name }}-mpsrouter
   action: ALLOW
   rules:
     - when:
