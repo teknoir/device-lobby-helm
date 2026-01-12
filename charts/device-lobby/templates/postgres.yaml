@@ -34,17 +34,32 @@ spec:
       containers:
         - name: {{ .Chart.Name }}-postgres
           image:  {{ .Values.images.postgres }}
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -q -h 127.0.0.1 -p 5432 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            failureThreshold: 30
+            periodSeconds: 5
+            timeoutSeconds: 3
+
           readinessProbe:
             exec:
-              command: [ "pg_isready" ]
-            initialDelaySeconds: 5
+              command:
+                - sh
+                - -c
+                - pg_isready -q -h 127.0.0.1 -p 5432 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 6
+
           livenessProbe:
             exec:
-              command: [ "pg_isready" ]
-            initialDelaySeconds: 30
+              command:
+                - sh
+                - -c
+                - pg_isready -q -h 127.0.0.1 -p 5432 -U "$POSTGRES_USER" -d "$POSTGRES_DB"
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 6
