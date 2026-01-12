@@ -73,7 +73,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: device-mgmt-toolkit-admin-jwt
-                  key: secret
+                  key: rsa_public_key
             - name: "MPS_JWT_ISSUER"
               valueFrom:
                 secretKeyRef:

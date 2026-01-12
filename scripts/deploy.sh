@@ -59,7 +59,7 @@ metadata:
 spec:
   repo: https://teknoir.github.io/device-lobby-helm
   chart: device-lobby
-  version: 0.0.1-beta.9
+  version: 0.0.1-beta.10
   targetNamespace: ${NAMESPACE}
   valuesContent: |-
     domain: ${DOMAIN}
@@ -85,7 +85,7 @@ metadata:
   namespace: ${NAMESPACE}
 type: Opaque
 stringData:
-  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/rpsdb?sslmode=<SSL-MODE>
+  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/rpsdb
 ---
 apiVersion: v1
 kind: Secret
@@ -94,7 +94,7 @@ metadata:
   namespace: ${NAMESPACE}
 type: Opaque
 stringData:
-  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb?sslmode=<SSL-MODE>
+  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb
 ---
 apiVersion: v1
 kind: Secret
@@ -103,7 +103,7 @@ metadata:
   namespace: ${NAMESPACE}
 type: Opaque
 stringData:
-  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb?sslmode=<SSL-MODE>
+  connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb
 ---
 apiVersion: v1
 kind: Secret

@@ -28,8 +28,8 @@ spec:
       app: {{ .Chart.Name }}-mpsrouter
   template:
     metadata:
-      annotations:
-        kuma.io/direct-access-services: "mps_default_svc_3000"
+{{/*      annotations:*/}}
+{{/*        kuma.io/direct-access-services: "mps_default_svc_3000"*/}}
       labels:
         app: {{ .Chart.Name }}-mpsrouter
     spec:
@@ -55,6 +55,8 @@ spec:
                   key: connectionString
             - name: "PORT"
               value: "8003"
+            - name: "MPS_CONNECTION_STRING"
+              value: {{ .Chart.Name }}-mps
             - name: "MPS_PORT"
               value: "3000"
           ports:
