@@ -53,22 +53,22 @@ spec:
           env:
             - name: "RPS_LOG_LEVEL"
               value: "{{ .Values.rps.logLevel }}"
-            - name: "RPS_VAULT_ADDRESS"
-              value: "http://{{ .Release.Name }}-vault:8200"
+{{/*            - name: "RPS_VAULT_ADDRESS"*/}}
+{{/*              value: "http://{{ .Release.Name }}-vault:8200"*/}}
             - name: "RPS_SECRETS_PATH"
               value: 'kv/data/'
             - name: "RPS_MPS_SERVER"
-              value: "http://mps:3000"
+              value: "http://{{ .Chart.Name }}-mps:3000"
             - name: "RPS_CONNECTION_STRING"
               valueFrom:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-rps
                   key: connectionString
-            - name: RPS_VAULT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: vault
-                  key: vaultKey
+{{/*            - name: RPS_VAULT_TOKEN*/}}
+{{/*              valueFrom:*/}}
+{{/*                secretKeyRef:*/}}
+{{/*                  name: vault*/}}
+{{/*                  key: vaultKey*/}}
           ports:
             - containerPort: 8080
               name: http-websockets

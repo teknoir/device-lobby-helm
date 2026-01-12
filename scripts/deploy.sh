@@ -34,6 +34,21 @@ else
   DOMAIN="teknoir.cloud"
 fi
 
+# Extract RSA public key from cert-manager secret (device-lobby-client-cert -> tls.crt)
+CERT_SECRET_NAME="${CERT_SECRET_NAME:-device-lobby-client-cert}"
+JWT_RSA_PUB=$(
+  kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get secret "$CERT_SECRET_NAME" \
+    -o jsonpath='{.data.tls\.crt}' 2>/dev/null \
+  | base64 -d \
+  | openssl x509 -pubkey -noout || true
+)
+if [ -z "$JWT_RSA_PUB" ]; then
+  echo "ERROR: Could not read tls.crt from secret '$CERT_SECRET_NAME' in ns '$NAMESPACE'." >&2
+  echo "Ensure cert-manager created the secret and it contains tls.crt/tls.key." >&2
+  exit 1
+fi
+INDENTED_JWT_RSA_PUB="$(printf "%s\n" "$JWT_RSA_PUB" | sed 's/^/    /')"
+
 cat <<EOF | kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f -
 ---
 apiVersion: helm.cattle.io/v1
@@ -44,7 +59,7 @@ metadata:
 spec:
   repo: https://teknoir.github.io/device-lobby-helm
   chart: device-lobby
-  version: 0.0.1-beta.8
+  version: 0.0.1-beta.9
   targetNamespace: ${NAMESPACE}
   valuesContent: |-
     domain: ${DOMAIN}
@@ -57,6 +72,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: device-lobby-mpsweb
+  namespace: ${NAMESPACE}
 type: Opaque
 stringData:
   user: teknoir
@@ -66,6 +82,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: device-lobby-rps
+  namespace: ${NAMESPACE}
 type: Opaque
 stringData:
   connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/rpsdb?sslmode=<SSL-MODE>
@@ -74,6 +91,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: device-lobby-mps
+  namespace: ${NAMESPACE}
 type: Opaque
 stringData:
   connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb?sslmode=<SSL-MODE>
@@ -82,7 +100,21 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: device-lobby-mpsrouter
+  namespace: ${NAMESPACE}
 type: Opaque
 stringData:
   connectionString: postgresql://postgres:98jgs2LdOQC2@postgres:5432/mpsdb?sslmode=<SSL-MODE>
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: device-mgmt-toolkit-admin-jwt
+  namespace: ${NAMESPACE}
+type: Opaque
+stringData:
+  kongCredType: jwt
+  key: admin-issuer
+  algorithm: RS256
+  rsa_public_key: |-
+${INDENTED_JWT_RSA_PUB}
 EOF
