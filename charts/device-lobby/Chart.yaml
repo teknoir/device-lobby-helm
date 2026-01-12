@@ -3,5 +3,5 @@ name: device-lobby
 description: Chart to install the Teknoir Device Lobby
 
 type: application
-version: 0.0.1-beta.14
+version: 0.0.1-beta.15
 appVersion: 0.0.1

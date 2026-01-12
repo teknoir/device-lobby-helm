@@ -22,7 +22,7 @@ metadata:
   name: {{ .Chart.Name }}-postgres
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.postgres.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       app: {{ .Chart.Name }}-postgres
