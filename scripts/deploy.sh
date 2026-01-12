@@ -51,23 +51,6 @@ INDENTED_JWT_RSA_PUB="$(printf "%s\n" "$JWT_RSA_PUB" | sed 's/^/    /')"
 
 cat <<EOF | kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f -
 ---
-apiVersion: helm.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: device-lobby
-  namespace: ${NAMESPACE}
-spec:
-  repo: https://teknoir.github.io/device-lobby-helm
-  chart: device-lobby
-  version: 0.0.1-beta.12
-  targetNamespace: ${NAMESPACE}
-  valuesContent: |-
-    domain: ${DOMAIN}
-
-EOF
-
-cat <<EOF | kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f -
----
 apiVersion: v1
 kind: Secret
 metadata:
@@ -102,4 +85,21 @@ stringData:
   algorithm: RS256
   rsa_public_key: |-
 ${INDENTED_JWT_RSA_PUB}
+EOF
+
+cat <<EOF | kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f -
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: device-lobby
+  namespace: ${NAMESPACE}
+spec:
+  repo: https://teknoir.github.io/device-lobby-helm
+  chart: device-lobby
+  version: 0.0.1-beta.13
+  targetNamespace: ${NAMESPACE}
+  valuesContent: |-
+    domain: ${DOMAIN}
+
 EOF

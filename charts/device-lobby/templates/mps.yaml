@@ -35,8 +35,6 @@ spec:
       labels:
         app: {{ .Chart.Name }}-mps
     spec:
-{{/*      imagePullSecrets:*/}}
-{{/*        - name: registrycredentials*/}}
       containers:
         - name: {{ .Chart.Name }}-mps
           image: {{ .Values.images.mps }}
@@ -77,12 +75,12 @@ spec:
                 secretKeyRef:
                   name: device-mgmt-toolkit-admin-jwt
                   key: key
-            - name: MPS_WEB_ADMIN_USER
+            - name: "MPS_WEB_ADMIN_USER"
               valueFrom:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-mpsweb
                   key: user
-            - name: MPS_WEB_ADMIN_PASSWORD
+            - name: "MPS_WEB_ADMIN_PASSWORD"
               valueFrom:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-mpsweb

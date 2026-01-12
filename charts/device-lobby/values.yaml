@@ -9,6 +9,7 @@ images:
   rps: "intel/device-mgmt-toolkit-rps:latest"
   webui: "intel/device-mgmt-toolkit-web-ui:latest"
   mpsrouter: "intel/device-mgmt-toolkit-mps-router:latest"
+  postgres: "pgvector/pgvector:pg15"
 mps:
   commonName: 
   replicaCount: 1

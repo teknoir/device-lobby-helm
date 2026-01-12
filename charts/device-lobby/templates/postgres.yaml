@@ -40,9 +40,19 @@ spec:
           image:  {{ .Values.images.postgres }}
           readinessProbe:
             exec:
-              command: ["/app","--health"]
-            initialDelaySeconds: 5
-            periodSeconds: 5
+              command:
+                - psql
+                - -U
+                - postgres
+                - -d
+                - rpsdb
+                - -c
+                - SELECT 1
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
           env:
             - name: POSTGRES_DB
               value: rpsdb
@@ -56,7 +66,16 @@ spec:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-postgres
                   key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
               name: tcp-postgres
-         
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres
+
