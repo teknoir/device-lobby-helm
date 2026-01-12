@@ -339,7 +339,7 @@ spec:
     - match:
         - port: 4433
           sniHosts:
-            - '{{ include "host" . }}'
+            - 'cira-{{ include "host" . }}'
       route:
         - destination:
             host: mps.{{ .Release.Namespace }}.svc.cluster.local
