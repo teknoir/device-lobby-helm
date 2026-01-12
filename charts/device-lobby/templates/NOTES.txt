@@ -1,0 +1,1 @@
+1. The Device Lobby is installed in the namespace: {{ .Release.Namespace }}

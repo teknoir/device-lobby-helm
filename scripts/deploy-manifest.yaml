@@ -1,0 +1,15 @@
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: device-lobby
+  namespace: demonstrations
+spec:
+  repo: https://teknoir.github.io/device-lobby-helm
+  chart: device-lobby
+  version: 0.2.0-cloud.3
+  targetNamespace: demonstrations
+  valuesContent: |-
+    models:
+    - name: swin-reid
+      image: us-docker.pkg.dev/teknoir/gcr.io/swin-reid-device-lobby:latest-local-20251112-104202

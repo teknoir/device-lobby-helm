@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rps
+  name: rps
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - port: 8080
+    name: websockets
+    protocol: TCP
+    targetPort: 8080
+  - port: 8081
+    name: webapi
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: rps
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rps
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.rps.replicaCount }}
+  selector:
+    matchLabels:
+      app: rps
+  template:
+    metadata:
+      labels:
+        app: rps
+    spec:
+      imagePullSecrets:
+        - name: registrycredentials
+      containers:
+        - name: rps
+          securityContext:
+            runAsUser: 999
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          image:  {{ .Values.images.rps }}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/admin/health
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          env:
+            - name: "RPS_LOG_LEVEL"
+              value: "{{ .Values.rps.logLevel }}"
+            - name: "RPS_VAULT_ADDRESS"
+              value: "http://{{ .Release.Name }}-vault:8200"
+            - name: "RPS_SECRETS_PATH"
+              value: 'kv/data/'
+            - name: "RPS_MPS_SERVER"
+              value: "http://mps:3000"
+            - name: "RPS_CONNECTION_STRING"
+              valueFrom:
+                secretKeyRef:
+                  name: rps
+                  key: connectionString
+            - name: RPS_VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: vault
+                  key: vaultKey
+          ports:
+            - containerPort: 8080
+              name: rps
+            - containerPort: 8081
+              name: rpsweb

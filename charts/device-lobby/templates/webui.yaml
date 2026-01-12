@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config-file
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: nginx-conf 
+data:
+  nginx.conf: |
+    server {
+      listen 80 default_server;
+      listen [::]:80 default_server;
+      server_name _;
+  
+      location / {
+          root   /usr/share/nginx/html;
+          index  index.html index.htm;
+      }
+
+      error_page  404              /index.html;
+
+      # redirect server error pages to the static page /50x.html
+      #
+      error_page   500 502 503 504  /50x.html;
+      location = /50x.html {
+          root   /usr/share/nginx/html;
+      }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webui
+  name: webui
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - port: 80
+    name: webui
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: webui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webui
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.ui.replicaCount }}
+  selector:
+    matchLabels:
+      app: webui
+  template:
+    metadata:
+      labels:
+        app: webui
+    spec:
+      imagePullSecrets:
+        - name: registrycredentials
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-config-file
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      containers:
+      - name: webui
+        image: {{.Values.images.webui}}
+        volumeMounts:
+          - name: nginx-conf
+            mountPath: /etc/nginx/conf.d/default.conf
+            subPath: nginx.conf
+        env:
+          - name: "MPS_SERVER"
+            value: "https://{{ include "host" . }}/mps"
+          - name: "RPS_SERVER"
+            value: "https://{{ include "host" . }}/rps"
+        ports:
+        - containerPort: 80
+          name: ui

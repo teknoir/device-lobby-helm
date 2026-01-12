@@ -1,0 +1,58 @@
+# Default values for installServersChart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+domain: "teknoir.cloud"
+
+images:
+  mps: "intel/device-mgmt-toolkit-mps:latest"
+  rps: "intel/device-mgmt-toolkit-rps:latest"
+  webui: "intel/device-mgmt-toolkit-web-ui:latest"
+  mpsrouter: "intel/device-mgmt-toolkit-mps-router:latest"
+mps:
+  commonName: 
+  replicaCount: 1
+  logLevel: "silly"
+  jwtExpiration: 1440
+ui:
+  replicaCount: 1
+rps:
+  replicaCount: 1
+  logLevel: "silly"
+#vault:
+#  injector:
+#    annotations:
+#      kuma.io/sidecar-injection: disabled
+#  server:
+#    annotations:
+#      kuma.io/sidecar-injection: disabled
+#  ui:
+#    annotations:
+#      kuma.io/sidecar-injection: disabled
+#    enabled: true
+#    serviceType: "LoadBalancer"
+#kong:
+#  podAnnotations:
+#      kuma.io/sidecar-injection: enabled
+#      kuma.io/gateway: enabled
+#  env:
+#    UPSTREAM_KEEPALIVE_POOL_SIZE: 0
+#  proxy:
+#    annotations:
+#      service.beta.kubernetes.io/azure-dns-label-name: ""
+#    stream:
+#      - containerPort: 4433
+#        servicePort: 4433
+#        parameters: []
+#    http:
+#      enabled: false
+mpsrouter:
+  replicaCount: 1
+
+
+
+
+# JWKS configuration for JWT verification is TEMPORARY and should be
+# replaced with our JWKS server solution in the future.
+jwks:
+  keys: []

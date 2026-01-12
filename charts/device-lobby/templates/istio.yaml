@@ -1,0 +1,325 @@
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Chart.Name }}-vs
+  namespace: {{ .Release.Namespace }}
+spec:
+  hosts:
+    - '*'
+  gateways:
+    - teknoir/teknoir-gateway
+  http:
+    # /mps/login/api/v1/authorize -> mps:3000 (rewrite to /api/v1/authorize)
+    - match:
+        - uri:
+            exact: /{{ .Release.Namespace }}/{{ .Chart.Name }}/mps/login/api/v1/authorize
+      rewrite:
+        uri: /api/v1/authorize
+      route:
+        - destination:
+            host: mps.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 3000
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+
+    # /mps/ws/relay/(.*) -> mpsrouter:8003 (rewrite to /relay/<capture>)
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/mps/ws/relay/
+      rewrite:
+        uri: /relay/
+      route:
+        - destination:
+            host: mpsrouter.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 8003
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/mps/ws/relay/
+
+    # Root web UI
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/
+      route:
+        - destination:
+            host: webui.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 80
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/
+
+    # /activate -> rps:8080
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/activate
+      route:
+        - destination:
+            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 8080
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/activate
+
+    # /deactivate -> rps:8080
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/deactivate
+      route:
+        - destination:
+            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 8080
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/deactivate
+
+    # /maintenance -> rps:8080
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/maintenance
+      route:
+        - destination:
+            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 8080
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/maintenance
+
+    # /rps -> rps:8081
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/rps
+      route:
+        - destination:
+            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 8081
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/rps
+
+    # /mps -> mpsrouter:8003
+    - match:
+        - uri:
+            prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/mps
+      route:
+        - destination:
+            host: mpsrouter.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 8003
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - "*"
+        exposeHeaders:
+          - "*"
+        maxAge: 24h
+      headers:
+        request:
+          add:
+            # Preserve suffix after /mps/ws/relay/ using X-Envoy-Original-Path if needed by app.
+            # Istio does not support regex capture in rewrites directly; consider EnvoyFilter if strict capture is required.
+            X-Forwarded-Prefix: /{{ .Release.Namespace }}/{{ .Chart.Name }}/mps
+
+---
+# TCP/TLS passthrough for CIRA equivalent (port 4433)
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ .Chart.Name }}-cira-gateway
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 4433
+        name: tls-4433
+        protocol: TLS
+      tls:
+        mode: PASSTHROUGH
+      hosts:
+        - '{{ include "host" . }}'
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: cira-vs
+  namespace: {{ .Release.Namespace }}
+spec:
+  hosts:
+    - '{{ include "host" . }}'
+  gateways:
+    - {{ .Chart.Name }}-cira-gateway
+  tls:
+    - match:
+        - port: 4433
+          sniHosts:
+            - "*"
+      route:
+        - destination:
+            host: mps.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 4433
+
+---
+# JWT validation placeholder (replace issuer and jwksUri)
+{{/*apiVersion: security.istio.io/v1beta1*/}}
+{{/*kind: RequestAuthentication*/}}
+{{/*metadata:*/}}
+{{/*  name: device-mgmt-jwt*/}}
+{{/*  namespace: {{ .Release.Namespace }}*/}}
+{{/*spec:*/}}
+{{/*  selector:*/}}
+{{/*    matchLabels:*/}}
+{{/*      app: mpsrouter*/}}
+{{/*  jwtRules:*/}}
+{{/*    - issuer: https://your-issuer/*/}}
+{{/*      jwksUri: https://your-issuer/.well-known/jwks.json*/}}
+{{/*      forwardOriginalToken: true*/}}
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: device-lobby-jwt-remote
+  namespace: demonstrations
+spec:
+  selector:
+    matchLabels:
+      app: mpsrouter
+  jwtRules:
+    - issuer: "https://{{ include "host" . }}"
+      audiences:
+        - "device-lobby-demonstrations"
+      jwksUri: "https://{{ include "host" . }}/.well-known/jwks.json"
+
+---
+# Authorization policy approximating "admin-acl" using a JWT claim
+# Adjust claim key and value to match your token (e.g., acl == device-mgmt-toolkit-admin)
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: admin-acl
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: mpsrouter
+  action: ALLOW
+  rules:
+    - when:
+        - key: request.auth.claims[acl]
+          values: ["device-mgmt-toolkit-admin"]
