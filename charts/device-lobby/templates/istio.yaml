@@ -15,7 +15,7 @@ spec:
             prefix: /activate
       route:
         - destination:
-            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-rps.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 8080
     - match:
@@ -23,7 +23,7 @@ spec:
             prefix: /deactivate
       route:
         - destination:
-            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-rps.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 8080
     - match:
@@ -31,7 +31,7 @@ spec:
             prefix: /maintenance
       route:
         - destination:
-            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-rps.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 8080
     - match:
@@ -41,7 +41,7 @@ spec:
         uri: /api/v1/authorize
       route:
         - destination:
-            host: mps.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-mps.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 3000
     - match:
@@ -51,7 +51,7 @@ spec:
         uri: /relay/
       route:
         - destination:
-            host: mpsrouter.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-mpsrouter.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 8003
     - match:
@@ -59,7 +59,7 @@ spec:
             prefix: /rps
       route:
         - destination:
-            host: rps.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-rps.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 8081
     - match:
@@ -67,7 +67,7 @@ spec:
             prefix: /mps
       route:
         - destination:
-            host: mpsrouter.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-mpsrouter.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 8003
     # Root web UI (must be last to avoid shadowing more specific routes)
@@ -76,7 +76,7 @@ spec:
             prefix: /
       route:
         - destination:
-            host: webui.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}-webui.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 80
 
