@@ -97,7 +97,7 @@ metadata:
 spec:
   repo: https://teknoir.github.io/device-lobby-helm
   chart: device-lobby
-  version: 0.0.1-beta.15
+  version: 0.0.1-beta.16
   targetNamespace: ${NAMESPACE}
   valuesContent: |-
     domain: ${DOMAIN}
