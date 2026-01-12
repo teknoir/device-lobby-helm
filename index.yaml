@@ -3,6 +3,16 @@ entries:
   device-lobby:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2026-01-12T10:51:11.310291473Z"
+    description: Chart to install the Teknoir Device Lobby
+    digest: dc12cc0abcd5c8e2e21125b5cd2b23ed59b248d11a209e1e21cb82544d343f86
+    name: device-lobby
+    type: application
+    urls:
+    - https://github.com/teknoir/device-lobby-helm/releases/download/device-lobby-0.0.1-beta.3/device-lobby-0.0.1-beta.3.tgz
+    version: 0.0.1-beta.3
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2026-01-12T10:24:42.977783249Z"
     description: Chart to install the Teknoir Device Lobby
     digest: b631bbdd2834d8711c3944177f5bff9bdd7da189202fdac2ffdb9f463504b264
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://github.com/teknoir/device-lobby-helm/releases/download/device-lobby-0.0.1-beta.0/device-lobby-0.0.1-beta.0.tgz
     version: 0.0.1-beta.0
-generated: "2026-01-12T10:24:42.977798568Z"
+generated: "2026-01-12T10:51:11.310324665Z"
