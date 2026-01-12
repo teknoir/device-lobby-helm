@@ -10,15 +10,6 @@ spec:
   gateways:
     - teknoir/teknoir-gateway
   http:
-    # Root web UI (must be last to avoid shadowing more specific routes)
-    - match:
-        - uri:
-            prefix: /
-      route:
-        - destination:
-            host: webui.{{ .Release.Namespace }}.svc.cluster.local
-            port:
-              number: 80
     - match:
         - uri:
             prefix: /activate
@@ -79,7 +70,15 @@ spec:
             host: mpsrouter.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: 8003
-
+    # Root web UI (must be last to avoid shadowing more specific routes)
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: webui.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: 80
 
 {{/*    # /mps/login/api/v1/authorize -> mps:3000 (rewrite to /api/v1/authorize)*/}}
 {{/*    - match:*/}}
