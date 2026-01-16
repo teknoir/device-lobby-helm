@@ -85,6 +85,44 @@ spec:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-mpsweb
                   key: password
+            - name: "MPS_WEB_AUTH_ENABLED"
+              value: "{{ .Values.mps.webAuthEnabled }}"
+            - name: "MPS_VAULT_ADDRESS"
+              value: "http://{{ .Release.Name }}-vault:8200"
+            - name: "MPS_VAULT_TOKEN"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-vault
+                  key: vaultKey
+            - name: "MPS_TLS_OFFLOAD"
+              value: "true"
+            - name: "MPS_TLS_CERT"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Namespace }}-ca
+                  key: tls.crt
+            - name: "MPS_TLS_CERT_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Namespace }}-ca
+                  key: tls.key
+            - name: "MPS_WEB_TLS_CERT"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Namespace }}-ca
+                  key: tls.crt
+            - name: "MPS_WEB_TLS_CERT_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Namespace }}-ca
+                  key: tls.key
+            - name: "MPS_WEB_TLS_CERT_CA"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Namespace }}-ca
+                  key: ca.crt
+            - name: "MPS_SECRETS_PROVIDER"
+              value: "teknoir"
           ports:
             - containerPort: 3000
               name: http-webapi

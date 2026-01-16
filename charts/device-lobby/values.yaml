@@ -15,42 +15,22 @@ mps:
   replicaCount: 1
   logLevel: "silly"
   jwtExpiration: 1440
+  webAuthEnabled: true
 ui:
   replicaCount: 1
 rps:
   replicaCount: 1
   logLevel: "silly"
-#vault:
-#  injector:
-#    annotations:
-#      kuma.io/sidecar-injection: disabled
-#  server:
-#    annotations:
-#      kuma.io/sidecar-injection: disabled
-#  ui:
-#    annotations:
-#      kuma.io/sidecar-injection: disabled
-#    enabled: true
-#    serviceType: "LoadBalancer"
-#kong:
-#  podAnnotations:
-#      kuma.io/sidecar-injection: enabled
-#      kuma.io/gateway: enabled
-#  env:
-#    UPSTREAM_KEEPALIVE_POOL_SIZE: 0
-#  proxy:
-#    annotations:
-#      service.beta.kubernetes.io/azure-dns-label-name: ""
-#    stream:
-#      - containerPort: 4433
-#        servicePort: 4433
-#        parameters: []
-#    http:
-#      enabled: false
 mpsrouter:
   replicaCount: 1
-
-
+vault:
+  ui:
+    enabled: true
+    serviceType: "LoadBalancer"
+  server:
+    readinessProbe:
+      enabled: true
+      path: '/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204'
 
 
 # JWKS configuration for JWT verification is TEMPORARY and should be

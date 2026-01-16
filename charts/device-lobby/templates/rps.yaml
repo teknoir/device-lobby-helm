@@ -35,14 +35,12 @@ spec:
       labels:
         app: {{ .Chart.Name }}-rps
     spec:
-{{/*      imagePullSecrets:*/}}
-{{/*        - name: registrycredentials*/}}
       containers:
         - name: {{ .Chart.Name }}-rps
-          securityContext:
-            runAsUser: 999
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
+{{/*          securityContext:*/}}
+{{/*            runAsUser: 999*/}}
+{{/*            runAsNonRoot: true*/}}
+{{/*            allowPrivilegeEscalation: false*/}}
           image:  {{ .Values.images.rps }}
           readinessProbe:
             httpGet:
@@ -53,8 +51,6 @@ spec:
           env:
             - name: "RPS_LOG_LEVEL"
               value: "{{ .Values.rps.logLevel }}"
-{{/*            - name: "RPS_VAULT_ADDRESS"*/}}
-{{/*              value: "http://{{ .Release.Name }}-vault:8200"*/}}
             - name: "RPS_SECRETS_PATH"
               value: 'kv/data/'
             - name: "RPS_MPS_SERVER"
@@ -64,10 +60,14 @@ spec:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-postgres
                   key: connectionStringRPS
-{{/*            - name: RPS_VAULT_TOKEN*/}}
+            - name: "RPS_SECRETS_PROVIDER"
+              value: "teknoir"
+{{/*            - name: "RPS_VAULT_ADDRESS"*/}}
+{{/*              value: "http://{{ .Release.Name }}-vault:8200"*/}}
+{{/*            - name: "RPS_VAULT_TOKEN"*/}}
 {{/*              valueFrom:*/}}
 {{/*                secretKeyRef:*/}}
-{{/*                  name: vault*/}}
+{{/*                  name: {{ .Release.Name }}-vault*/}}
 {{/*                  key: vaultKey*/}}
           ports:
             - containerPort: 8080

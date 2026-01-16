@@ -3,6 +3,8 @@
 This chart deploys the Device Lobby to a Kubernetes cluster.
 
 > The implementation of the Helm chart is right now the bare minimum to get it to work.
+> The Helm Chart is not meant to be infinitely configurable, but to provide a quick way to deploy Device Lobby to a Kubernetes cluster.
+> Configurability should only be added for what might be different between namespaces.
 
 ## Usage in Teknoir platform
 Use the HelmChart to deploy the Device Lobby to a Namespace.
